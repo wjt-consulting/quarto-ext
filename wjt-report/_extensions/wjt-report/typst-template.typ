@@ -226,32 +226,47 @@
   block(width: 100%, height: 1fr, inset: (x: 0.85in, top: 0.5in, bottom: 0.7in))[
     // Tight leading: names and affiliations can wrap, and the body's paragraph
     // leading would open a bigger gap between lines than between items.
-    #let party(name, note) = stack(spacing: 8pt,
+    #let name-cell(name) = block[
+      #set par(leading: 0.4em)
+      #text(font: sans, size: 13pt, weight: "semibold", fill: brand.ink)[#name]
+    ]
+    #let note-cell(note) = if note != none {
       block[
-        #set par(leading: 0.4em)
-        #text(font: sans, size: 13pt, weight: "semibold", fill: brand.ink)[#name]
-      ],
-      if note != none {
-        block[
-          #set par(leading: 0.5em)
-          #text(font: serif, size: 11pt, fill: brand.gray)[#note]
-        ]
-      },
-    )
-    #grid(columns: (1.6fr, 1fr), column-gutter: 0.9in, row-gutter: 9pt,
+        #set par(leading: 0.5em)
+        #text(font: serif, size: 11pt, fill: brand.gray)[#note]
+      ]
+    }
+    // One grid with shared rows (eyebrows, then name / note per author), so a
+    // name that wraps on one side can't push the other side's note out of line.
+    // The client sits beside the first author.
+    #let rows = calc.max(authors.len(), if client != none { 1 } else { 0 })
+    #let cells = (
       if authors.len() > 0 { eyebrow[Prepared by] },
       if client != none { eyebrow[Prepared for] },
-      if authors.len() > 0 {
-        stack(spacing: 10pt, ..authors.map(a => {
-          let degrees = a.at("degrees", default: none)
-          let name = if degrees != none [#a.name, #degrees] else { a.name }
-          party(name, a.at("affiliation", default: none))
-        }))
-      },
-      if client != none {
-        party(client, client-note)
-      },
     )
+    #let gutters = ()
+    #for i in range(rows) {
+      let a = authors.at(i, default: none)
+      let left-name = if a != none {
+        let degrees = a.at("degrees", default: none)
+        if degrees != none [#a.name, #degrees] else { a.name }
+      }
+      let left-note = if a != none { a.at("affiliation", default: none) }
+      let right-name = if i == 0 { client }
+      let right-note = if i == 0 { client-note }
+      // eyebrow -> first name 9pt; between authors 16pt
+      gutters.push(if i == 0 { 9pt } else { 16pt })
+      cells += (
+        if left-name != none { name-cell(left-name) },
+        if right-name != none { name-cell(right-name) },
+      )
+      if left-note != none or right-note != none {
+        gutters.push(8pt)
+        cells += (note-cell(left-note), note-cell(right-note))
+      }
+    }
+    #grid(columns: (1.25fr, 1fr), column-gutter: 0.6in, row-gutter: gutters,
+      ..cells)
     #v(1fr)
     #grid(columns: (1fr, auto), align: (left + bottom, right + bottom),
       if logo != none { image(logo, height: 0.72in, alt: if logo-alt != none { plain(logo-alt) }) },
