@@ -490,7 +490,6 @@
   show heading: set text(font: sans, hyphenate: false)
 
   show heading.where(level: 1): set block(above: 0pt, below: 16pt)
-  show heading.where(level: 1, supplement: [Appendix]): set block(above: 0.45in)
   show heading.where(level: 2): set block(above: 1.9em, below: 12pt)
   show heading.where(level: 3): set block(above: 1.7em, below: 10pt)
   show heading.where(level: 4): set block(above: 1.6em, below: 8pt)
@@ -530,6 +529,7 @@
         blurb: chapter-blurb.get(),
       )
     } else if is-appendix(it) {
+      pagebreak(weak: true)
       badged-h1(chapter-mark(it), fill: brand.ink, text-fill: brand.gold)
     } else if numbered {
       // Chapter 1 follows the executive summary on the first body page.
