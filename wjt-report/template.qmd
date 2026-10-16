@@ -1,0 +1,145 @@
+---
+title: "Measuring Growth in Diagnostic Assessment Systems"
+subtitle: "A framework for reporting student learning when tests are taken on the student's own schedule"
+short-title: "Measuring Growth in Diagnostic Assessment"
+author:
+  - name: W. Jake Thompson, Ph.D.
+    affiliations:
+      - name: Accessible Teaching, Learning, and Assessment Systems
+client: "State Department of Education"
+client-note: "April 2026"
+date: today
+report-number: "2026-04"
+report-kind: "Technical Report"
+citation-text: >
+  Thompson, W. J. (2026). *Measuring growth in diagnostic assessment systems*
+  (Technical Report No. 2026-04). Accessible Teaching, Learning, and Assessment Systems.
+abstract: >
+  Flexible administration windows let students test when they are ready, but they break
+  the assumption that every score comes from the same point in the school year. We show
+  that a diagnostic classification model with window-specific attribute profiles recovers
+  growth estimates within 0.04 of a fixed-window baseline.
+bibliography:
+  - bib/references.bib
+  - bib/packages.bib
+format:
+  wjt-report-typst: default
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(wjake)
+library(gt)
+
+set_theme(
+  theme_wjake(
+    base_family = "Source Sans 3",
+    plot.margin = margin(10, 0, 10, 10)
+  )
+)
+```
+
+# Introduction
+
+Assessment systems built for a single spring window inherit a convenient fiction: that
+all students in a grade encounter the same content at the same time.
+
+## Why flexible administration changes reporting
+
+The reporting layer, not the scoring layer, absorbs most of the difficulty.
+
+- Window membership is recorded at the student level, not the school level.
+- Attribute profiles are estimated jointly across windows with a shared item bank.
+- Growth is reported as a change in mastery probability.
+
+### Scope of this report
+
+Sections 2 and 3 develop the model and simulation evidence. The model builds on diagnostic
+classification models [@templin2013; @bradshaw2019] and is estimated with measr [@measr].
+
+# Measurement model {blurb="Specification, estimation, and the assumptions that let windows be compared."}
+
+## Estimating growth across windows
+
+Take a look at the image in @fig-penguins.
+
+```{r}
+#| label: fig-penguins
+#| fig-cap: |
+#|   Here is a figure captions.
+#| fig-alt: |
+#|   Alt text for the image
+
+ggplot(penguins, aes(x = bill_len, y = flipper_len)) +
+  geom_point(aes(color = species))
+```
+
+::: {.callout-note}
+Credible intervals are computed from 4 chains of 2,000 post-warmup draws.
+:::
+
+::: {.callout-warning}
+Growth estimates should not be reported for attributes measured by fewer than five items.
+:::
+
+And here is a table, as shown in @tbl-example.
+
+```{r}
+#| label: tbl-example
+#| tbl-cap: Here is a table caption.
+
+tibble(
+  state = sample(state.name, size = 10),
+  size = sample(50:100, size = 10)
+) |>
+  mutate(pct = size / sum(size) * 100) |>
+  gt() |>
+  gt_theme_report()
+```
+
+# Authors {.unnumbered}
+
+::: {.wrap-image}
+![](wjt-2022-hex.png){width=1.5in}
+
+W. Jake Thompson, PhD, is the Associate Director for Research and Psychometrics at Accessible Teaching, Learning, and Assessment Systems (ATLAS), a research center within the Achievement and Assessment Institute at the University of Kansas.
+He received his PhD in Educational Psychology and Research from the University of Kansas's School of Education and Human Sciences in 2018, with a focus on research, evaluation, measurement, and statistics.
+Dr. Thompson has over 10 years of experience conducting statistical evaluations and data analysis across a variety of industries including education, medicine, and advertising.
+:::
+
+# References {.unnumbered}
+
+```{r}
+#| label: write-bib
+
+if (!file.exists("bib/packages.bib")) {
+  file.create("bib/packages.bib")
+}
+suppressWarnings(
+  knitr::write_bib(c(.packages()), "bib/packages.bib")
+)
+
+read_lines("bib/packages.bib", lazy = FALSE) %>%
+  str_replace_all(" Stan", " {Stan}") %>%
+  str_replace_all("rstan:", "{RStan}:") %>%
+  str_replace_all("Bayesian", "{Bayesian}") %>%
+  str_replace_all("loo:", "{loo}:") %>%
+  str_replace_all("WAIC", "{WAIC}") %>%
+  write_lines("bib/packages.bib")
+```
+
+::: {#refs}
+:::
+
+# Appendix: model code {.appendix}
+
+```r
+measr::measr_dcm(
+  data = flex_windows,
+  qmatrix = q_mat,
+  type = "lcdm"
+)
+```

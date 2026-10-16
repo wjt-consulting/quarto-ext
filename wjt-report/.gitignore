@@ -1,0 +1,27 @@
+# Rendered output of the example document
+template.pdf
+template.typ
+template_files/
+
+# Quarto / knitr intermediates
+.quarto/
+*.knit.md
+*.typst.md
+*_cache/
+
+# R session files
+.Rhistory
+.RData
+.Rproj.user/
+
+# macOS
+.DS_Store
+
+# HTML design mock-up (local reference only)
+Research Report Template.dc.html
+doc-page.js
+support.js
+assets/
+
+/.quarto/
+**/*.quarto_ipynb

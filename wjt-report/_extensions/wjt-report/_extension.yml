@@ -1,0 +1,36 @@
+title: Research Report
+author: W. Jake Thompson
+version: 1.0.0
+quarto-required: ">=1.5.0"
+contributes:
+  formats:
+    typst:
+      execute:
+        echo: false
+        warning: false
+      fig-width: 6
+      fig-asp: 0.618
+      fig-dpi: 320
+      filters:
+        - wjt-report.lua
+        - path: wjt-tables.lua
+          at: pre-render
+      template-partials:
+        - typst-template.typ
+        - typst-show.typ
+      toc: true
+      toc-title: Contents
+      toc-depth: 2
+      number-sections: true
+      section-dividers: after-first
+      cover: true
+      report-logo: logo.png
+      csl: apa.csl
+      citeproc: true
+      link-citations: true
+      report-kind: Technical Report
+      abstract-title: Executive summary
+      papersize: us-letter
+      fontsize: 11.5pt
+      mainfont: Source Serif 4
+      keep-typ: false
