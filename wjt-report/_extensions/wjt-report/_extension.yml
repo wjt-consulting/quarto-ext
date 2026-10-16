@@ -25,12 +25,17 @@ contributes:
       section-dividers: after-first
       cover: true
       report-logo: logo.png
+      report-logo-alt: WJT Consulting logo
       csl: apa.csl
       citeproc: true
       link-citations: true
       report-kind: Technical Report
       abstract-title: Executive summary
       papersize: us-letter
+      # Accessible PDF: tagged, PDF/UA-1 conformant (the only UA level Typst
+      # supports). Typst fails the render on detectable violations, e.g. images
+      # without alt text.
+      pdf-standard: ua-1
       fontsize: 11.5pt
       mainfont: Source Serif 4
       keep-typ: false

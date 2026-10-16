@@ -48,6 +48,9 @@ $if(report-logo)$
   // Pandoc escapes markup chars (e.g. `\_`) in variables; undo that for the path.
   logo: "$report-logo$".replace("\\", ""),
 $endif$
+$if(report-logo-alt)$
+  logo-alt: [$report-logo-alt$],
+$endif$
 $if(abstract)$
   abstract: [$abstract$],
 $endif$

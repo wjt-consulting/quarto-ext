@@ -1,6 +1,8 @@
 # Research Report (Typst / Quarto extension)
 
 Brand: `#009fb7` teal · `#fed766` gold · `#696773` gray · `#272727` ink · `#f0f0f0` mist.
+For contrast, teal text and small elements use `#007789` and the cover band `#006979`;
+`#009fb7` is kept for large decorative shapes (see Accessibility).
 Type: Source Sans 3 (headings, furniture) + Source Serif 4 (body) + Source Code Pro (code).
 
 ## Files
@@ -60,6 +62,24 @@ Unless `citation-text` is set, the contents page shows an APA 7 citation built f
   that matters).
 - Report kind and number: `report-kind` and `report-number`.
 - Publisher: `publisher`, if set. This is separate from author affiliations.
+
+## Accessibility
+
+Every report is rendered as **PDF/UA-1** (`pdf-standard: ua-1`), the only PDF/UA level Typst
+supports. The PDF is tagged, with the document title, language and structure set. Typst
+stops the render if it can detect a violation, most commonly an image without alt text:
+
+- Figures from code: `#| fig-alt: "…"`
+- Markdown images: `![](file.png){fig-alt="…"}`
+- Cover logo: `report-logo-alt` (defaults to "WJT Consulting logo")
+
+If veraPDF is installed (`quarto install verapdf`), Quarto validates every render against
+PDF/UA-1 and reports `PASSED` or the failing rules.
+
+Colours meet WCAG 2.1 AA contrast: text ≥ 4.5:1 (≥ 3:1 for large headings), graphics ≥ 3:1.
+The brand teal `#009fb7` is only 3.2:1 on white, so it is not used for text or small
+elements. veraPDF can't check contrast, alt-text quality or reading order, and colours
+inside figures (e.g. gold points on white) are set by the plotting code, not the template.
 
 ## Fonts
 

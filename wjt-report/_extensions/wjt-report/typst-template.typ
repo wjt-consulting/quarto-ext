@@ -2,12 +2,17 @@
 // Research Report — Typst template for Quarto
 // Palette: #009fb7 teal · #fed766 gold · #696773 gray
 //          #272727 ink  · #f0f0f0 mist
+// Accessibility: brand teal (#009fb7) is only 3.2:1 on white, so text and
+// small teal elements use #007789 (5.3:1 on white, 4.6:1 on mist) and the
+// cover band #006979 (white 6.4:1, gold 4.6:1), meeting WCAG 2.1 AA.
 // Visual spec: Research Report Template.dc.html
 // ============================================================
 
 #let brand = (
-  teal: rgb("#009fb7"),
-  teal-dark: rgb("#0091a7"),
+  teal: rgb("#007789"),         // text and small elements
+  teal-band: rgb("#006979"),    // cover band (carries white and gold text)
+  teal-band-dark: rgb("#00606f"),
+  teal-bright: rgb("#009fb7"),  // large decorative shapes only
   teal-tint: rgb("#f7feff"),
   gold: rgb("#fed766"),
   gold-tint: rgb("#fffdf3"),
@@ -179,14 +184,15 @@
   report-number: none,
   kind: "Technical Report",
   logo: none,
+  logo-alt: none,
   band-height: 5.9in,
 ) = {
   set page(margin: 0pt, header: none, footer: none, numbering: none)
 
   // — colour band —
-  block(width: 100%, height: band-height, fill: brand.teal, clip: true)[
+  block(width: 100%, height: band-height, fill: brand.teal-band, clip: true)[
     #place(top + right, dx: 0.7in, dy: -1.1in,
-      hex-ring(width: 3.2in, fill: brand.teal-dark, hole: brand.teal))
+      hex-ring(width: 3.2in, fill: brand.teal-band-dark, hole: brand.teal-band))
     #place(top + right, dx: -1.55in, dy: 1.55in, hex(width: 1.05in, fill: brand.gold))
     #place(top + right, dx: -2.35in, dy: 2.75in,
       hex(width: 0.5in, fill: brand.gold.transparentize(45%)))
@@ -248,7 +254,7 @@
     )
     #v(1fr)
     #grid(columns: (1fr, auto), align: (left + bottom, right + bottom),
-      if logo != none { image(logo, height: 0.72in) },
+      if logo != none { image(logo, height: 0.72in, alt: if logo-alt != none { plain(logo-alt) }) },
       stack(dir: ltr, spacing: 5pt,
         hex(width: 15pt, fill: brand.mist),
         hex(width: 15pt, fill: brand.gray.transparentize(65%)),
@@ -343,7 +349,7 @@
     #block(width: 100%, height: 100%, clip: true)[
       #place(top + left, dx: -1.2in, dy: -0.9in, hex(width: 4.6in, fill: rgb("#2f2f2f")))
       #place(bottom + right, dx: 1.1in, dy: 1.6in,
-        hex-ring(width: 5.4in, fill: brand.teal.transparentize(10%), hole: brand.ink, ratio: 0.76))
+        hex-ring(width: 5.4in, fill: brand.teal-bright.transparentize(10%), hole: brand.ink, ratio: 0.76))
       #place(top + right, dx: -1.1in, dy: 2.2in, hex(width: 0.62in, fill: brand.gold))
       #place(horizon + left, dx: 0.85in, block(width: 5.4in)[
         #grid(columns: (auto, 1fr), align: horizon, column-gutter: 12pt,
@@ -439,6 +445,7 @@
   kind: "Technical Report",
   publisher: none,
   logo: none,
+  logo-alt: none,
   abstract: none,
   abstract-title: "Executive summary",
   toc: true,
@@ -595,7 +602,7 @@
     cover-page(
       title: title, subtitle: subtitle, authors: authors, client: client,
       client-note: client-note, report-number: report-number,
-      kind: kind, logo: logo,
+      kind: kind, logo: logo, logo-alt: logo-alt,
     )
   }
 

@@ -38,6 +38,9 @@ local function strip_font_family(attr)
   local kept = {}
   for decl in style:gmatch("[^;]+") do
     if not decl:match("^%s*font%-family%s*:") then
+      -- Relative weights (gt uses "bolder") have no Typst equivalent.
+      decl = decl:gsub("(font%-weight%s*:%s*)bolder", "%1bold")
+                 :gsub("(font%-weight%s*:%s*)lighter", "%1normal")
       table.insert(kept, decl)
     end
   end
