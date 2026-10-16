@@ -6,7 +6,7 @@ author:
   - name: W. Jake Thompson
     degrees: Ph.D.
     affiliations:
-      - name: Accessible Teaching, Learning, and Assessment Systems
+      - name: ATLAS, University of Kansas
 client: "State Department of Education"
 client-note: "April 2026"
 report-kind: "Technical Report"
