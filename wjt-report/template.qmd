@@ -3,17 +3,14 @@ title: "Measuring Growth in Diagnostic Assessment Systems"
 subtitle: "A framework for reporting student learning when tests are taken on the student's own schedule"
 short-title: "Measuring Growth in Diagnostic Assessment"
 author:
-  - name: W. Jake Thompson, Ph.D.
+  - name: W. Jake Thompson
+    degrees: Ph.D.
     affiliations:
       - name: Accessible Teaching, Learning, and Assessment Systems
 client: "State Department of Education"
 client-note: "April 2026"
-date: today
-report-number: "2026-04"
 report-kind: "Technical Report"
-citation-text: >
-  Thompson, W. J. (2026). *Measuring growth in diagnostic assessment systems*
-  (Technical Report No. 2026-04). Accessible Teaching, Learning, and Assessment Systems.
+publisher: "WJT Consulting"
 abstract: >
   Flexible administration windows let students test when they are ready, but they break
   the assumption that every score comes from the same point in the school year. We show

@@ -13,6 +13,15 @@ $if(by-author)$
 $for(by-author)$
     (
       name: [$it.name.literal$],
+$if(it.name.family)$
+      family: [$it.name.family$],
+$endif$
+$if(it.name.given)$
+      given: [$it.name.given$],
+$endif$
+$if(it.degrees)$
+      degrees: [$for(it.degrees)$$it$$sep$, $endfor$],
+$endif$
 $if(it.affiliations)$
       affiliation: [$for(it.affiliations)$$it.name$$sep$, $endfor$],
 $endif$
@@ -26,8 +35,8 @@ $endif$
 $if(client-note)$
   client-note: [$client-note$],
 $endif$
-$if(date)$
-  date: [$date$],
+$if(publisher)$
+  publisher: [$publisher$],
 $endif$
 $if(report-number)$
   report-number: [$report-number$],

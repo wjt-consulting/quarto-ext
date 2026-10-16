@@ -43,6 +43,24 @@ In-text citations link to their entry in the reference list (`link-citations: tr
 
 A document can also override the style with its own `csl:`.
 
+## Suggested citation
+
+Unless `citation-text` is set, the contents page shows an APA 7 citation built from the YAML:
+
+> Thompson, W. J. (2026). *Measuring growth in diagnostic assessment systems* (Technical
+> Report No. 2026-10). WJT Consulting.
+
+- Authors: `Family, G. G.` from each author's name (APA list rules up to 20 names, then the
+  first 19, `. . .`, and the last). Put credentials in `degrees:`, not in `name:`, since a
+  comma in `name` makes Quarto read it as "Family, Given". For particles or unusual names,
+  give the parts explicitly: `name: {given: Mary-Jane, family: van der Berg}`. A name Quarto
+  can't split (e.g. an organisation) is used as written.
+- Year: the year the document is rendered.
+- Title: as written in `title` (APA prefers sentence case; override with `citation-text` if
+  that matters).
+- Report kind and number: `report-kind` and `report-number`.
+- Publisher: `publisher`, if set. This is separate from author affiliations.
+
 ## Fonts
 
 Fonts must be installed locally (or bundled with `font-paths`): Source Serif 4,
@@ -54,11 +72,13 @@ as fallbacks (Typst still warns about the missing first choices).
 | key | default | effect |
 | --- | --- | --- |
 | `short-title` | `title` | running header text |
-| `client` / `client-note` | — | "Prepared for" block on cover, footer left |
-| `report-number` / `report-kind` | — / Technical Report | cover eyebrow |
+| `author` (`name`, `degrees`, `affiliations`) | — | "Prepared by" block on cover (`name, degrees`) and the suggested citation (`Family, G. G.`) |
+| `client` / `client-note` | — | "Prepared for" block on cover; the note line is omitted when unset |
+| `report-number` / `report-kind` | render month (`YYYY-MM`) / Technical Report | cover eyebrow and suggested citation |
+| `publisher` | — | publisher in the suggested citation (omitted when unset) |
 | `report-logo` | `logo.png` | cover logo (not `logo`, which Quarto reserves for a page-background logo) |
 | `abstract` / `abstract-title` | — / Executive summary | grey hex summary box |
-| `citation-text` | — | suggested-citation box at foot of contents |
+| `citation-text` | built from the YAML | suggested-citation box at foot of contents; set it to override the generated text |
 | `section-dividers` | `after-first` | which chapters open with a full-bleed dark divider page: `after-first` (numbered chapters except chapter 1, which runs on after the executive summary), `true` (every numbered chapter), `false` (none) |
 | `toc-depth` | `2` | levels shown in the contents |
 | `cover` | `true` | set `false` for internal drafts |

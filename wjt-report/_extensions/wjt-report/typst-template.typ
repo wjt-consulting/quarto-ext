@@ -99,6 +99,49 @@
   if on.len() > 0 { on.first() } else if before.len() > 0 { before.last() } else { none }
 }
 
+// ---------- suggested citation (APA 7) ----------------------
+// Plain text of Quarto-supplied content (names, titles).
+#let plain(it) = if it == none { "" } else if type(it) == str { it } else if it.has("text") { it.text } else if it.has("children") { it.children.map(plain).join() } else if it.has("body") { plain(it.body) } else if it == [ ] { " " } else { "" }
+
+// "W. Jake" -> "W. J."; "Mary-Jane" -> "M.-J."
+#let initials(given) = plain(given).split(" ").filter(w => w != "").map(w =>
+  w.split("-").filter(p => p != "").map(p => p.clusters().first() + ".").join("-")
+).join(" ")
+
+// "Thompson, W. J."; a name Quarto couldn't split (e.g. an organisation)
+// is used as written.
+#let apa-name(a) = {
+  let family = a.at("family", default: none)
+  let given = a.at("given", default: none)
+  if family == none { plain(a.name) }
+  else if given == none { plain(family) }
+  else { plain(family) + ", " + initials(given) }
+}
+
+// APA 7 author list: "A", "A, & B", "A, B, & C" (up to 20 names); beyond
+// 20, the first 19, an ellipsis, then the last.
+#let apa-authors(authors) = {
+  let names = authors.map(apa-name)
+  let n = names.len()
+  if n == 0 { none }
+  else if n == 1 { names.first() }
+  else if n <= 20 { names.slice(0, -1).join(", ") + ", & " + names.last() }
+  else { names.slice(0, 19).join(", ") + ", . . . " + names.last() }
+}
+
+// Author, A. A. (Year). _Title_ (Kind No. Number). Publisher.
+#let apa-citation(authors: (), year: none, title: none, kind: none, number: none, publisher: none) = {
+  let series = if kind != none and number != none { [ (#kind No. #number)] }
+    else if kind != none { [ (#kind)] }
+    else if number != none { [ (No. #number)] }
+  let work = [#emph(title)#series.]
+  let who = apa-authors(authors)
+  // Group authors need the period personal names get from their initials.
+  if who != none and not who.ends-with(".") { who += "." }
+  let lead = if who != none { [#who (#year). #work] } else { [#work (#year).] }
+  if publisher != none { [#lead #publisher.] } else { lead }
+}
+
 // ---------- page furniture ----------------------------------
 #let running-header() = context {
   let chap = current-chapter()
@@ -133,7 +176,6 @@
   authors: (),
   client: none,
   client-note: none,
-  date: none,
   report-number: none,
   kind: "Technical Report",
   logo: none,
@@ -194,10 +236,14 @@
       if authors.len() > 0 { eyebrow[Prepared by] },
       if client != none { eyebrow[Prepared for] },
       if authors.len() > 0 {
-        stack(spacing: 10pt, ..authors.map(a => party(a.name, a.at("affiliation", default: none))))
+        stack(spacing: 10pt, ..authors.map(a => {
+          let degrees = a.at("degrees", default: none)
+          let name = if degrees != none [#a.name, #degrees] else { a.name }
+          party(name, a.at("affiliation", default: none))
+        }))
       },
       if client != none {
-        party(client, if client-note != none { client-note } else { date })
+        party(client, client-note)
       },
     )
     #v(1fr)
@@ -389,9 +435,9 @@
   authors: (),
   client: none,
   client-note: none,
-  date: none,
   report-number: none,
   kind: "Technical Report",
+  publisher: none,
   logo: none,
   abstract: none,
   abstract-title: "Executive summary",
@@ -406,8 +452,20 @@
   section-numbering: none,
   doc,
 ) = {
+  // Report number defaults to the render month, e.g. "2026-10".
+  let report-number = if report-number == none {
+    datetime.today().display("[year]-[month]")
+  } else { report-number }
+
+  // Suggested citation: `citation-text` wins; otherwise built from the YAML.
+  let citation = if citation != none { citation } else if title != none {
+    apa-citation(
+      authors: authors, year: datetime.today().year(), title: title,
+      kind: kind, number: report-number, publisher: publisher,
+    )
+  }
+
   // `set document` needs plain strings; Quarto hands us content blocks.
-  let plain(it) = if it == none { "" } else if type(it) == str { it } else if it.has("text") { it.text } else if it.has("children") { it.children.map(plain).join() } else if it.has("body") { plain(it.body) } else if it == [ ] { " " } else { "" }
   set document(title: if title == none { "" } else { title }, author: authors.map(a => plain(a.name)))
 
   let running = if short-title != none { short-title } else { title }
@@ -536,7 +594,7 @@
   if cover in (true, "true") {
     cover-page(
       title: title, subtitle: subtitle, authors: authors, client: client,
-      client-note: client-note, date: date, report-number: report-number,
+      client-note: client-note, report-number: report-number,
       kind: kind, logo: logo,
     )
   }
